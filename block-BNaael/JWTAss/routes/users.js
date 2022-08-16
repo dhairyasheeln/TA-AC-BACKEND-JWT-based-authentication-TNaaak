@@ -13,7 +13,8 @@ router.post('/register',async (req,res,next)=>{
   try {
     var user=await User.create(req.body);
     console.log(user);
-    res.status(201).json({user});
+    var token=await user.signToken();
+    res.status(201).json({user:user.userJSON(token)});
   } catch (error) {
     console.log('Error:'+error);
     next(error);
@@ -37,7 +38,9 @@ router.post('/login',async (req,res,next)=>{
     res.status(400).json({err:'Incorrect Password'});
   }
   else{
-    res.status(201).json({msg:'Login successful'});
+    var token=await user.signToken();
+    console.log('Token:'+token);
+    res.json({user:user.userJSON(token)});
   }
   } catch (error) {
     next(error);
